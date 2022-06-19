@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "ExampleMod": {
+      "commandName": "Project",
+      "commandLineArgs": "/singleplayer _MODULES_*Native*SandBoxCore*CustomBattle*SandBox*StoryMode*ExampleMod*_MODULES_",
+      "workingDirectory": "E:\\Steam Games\\steamapps\\common\\Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client"
+    },
+    "Bannerlord Execute": {
+      "commandName": "Executable",
+      "executablePath": "E:\\Steam Games\\steamapps\\common\\Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\Bannerlord.exe",
+      "commandLineArgs": "/singleplayer _MODULES_*Native*SandBoxCore*CustomBattle*SandBox*StoryMode*ExampleMod*_MODULES_",
+      "workingDirectory": "E:\\Steam Games\\steamapps\\common\\Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client"
+    }
+  }
+}
