@@ -39,6 +39,7 @@ namespace ExampleMod
                 starter.AddBehavior(new SaveBehavior());
                 starter.AddBehavior(new InjuryHealingBehavior());
                 starter.AddBehavior(new InjuryInfoBehavior());
+                // starter.AddModel(new InjuryPenaltyModel());
                 
                 //TODO: Figure out some kind of menu extension
                 // starter.AddGameMenu();
