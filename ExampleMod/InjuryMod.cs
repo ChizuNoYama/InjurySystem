@@ -8,11 +8,10 @@ using ExampleMod.Behaviors;
 using TaleWorlds.Core;
 using TaleWorlds.CampaignSystem;
 using ExampleMod.Models;
-using HarmonyLib;
 
 namespace ExampleMod
 {
-    public class Test : MBSubModuleBase
+    public class InjuryMod : MBSubModuleBase
     {
         protected override void OnSubModuleLoad()
         {
@@ -27,6 +26,7 @@ namespace ExampleMod
             //var harmony = new Harmony(harmonyID);
 
             LimbDamageManager.Initialize();
+            PenaltyManager.Initialize();
         }
 
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
@@ -35,8 +35,13 @@ namespace ExampleMod
 
             if(game.GameType is Campaign)
             {
-                (gameStarterObject as CampaignGameStarter)?.AddBehavior(new SaveBehavior());
-                //(gameStarterObject as CampaignGameStarter)?.AddBehavior(new WoundHealingBehavior());
+                CampaignGameStarter starter = (CampaignGameStarter)gameStarterObject;
+                starter.AddBehavior(new SaveBehavior());
+                starter.AddBehavior(new InjuryHealingBehavior());
+                starter.AddBehavior(new InjuryInfoBehavior());
+                
+                //TODO: Figure out some kind of menu extension
+                // starter.AddGameMenu();
             }
         }
 
@@ -56,16 +61,16 @@ namespace ExampleMod
 
         private void OnMissionMainAgentChanged(object sender, EventArgs args)
         {
-            // I hate this nullable stuff, but I also hate handling Exceptions
+            // I hate this nullable stuff, but I also hate handling NRE's
             Mission? mission = sender as Mission;
             if (mission?.MainAgent != null && mission.MainAgent.IsHero)
             {
                 Hero? hero = (mission.MainAgent.Character as CharacterObject)?.HeroObject;
-                if(hero != null)
+                if(hero != null && hero.IsHumanPlayerCharacter)
                 {
-                    mission.MainAgent.AddComponentIfNotExisting(new WoundedAgentComponent(mission.MainAgent));
-                    WoundedHeroDeveloper woundDeveloper = new WoundedHeroDeveloper(hero.HeroDeveloper);
-                    hero.SetHeroDeveloper(woundDeveloper);
+                    WoundedAgentComponent component = new WoundedAgentComponent(mission.MainAgent);
+                    mission.MainAgent.AddComponentIfNotExisting(component);
+                    
                 }
             }
         }

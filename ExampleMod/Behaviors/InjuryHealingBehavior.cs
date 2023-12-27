@@ -1,23 +1,45 @@
-﻿using ExampleMod.Models;
+﻿using System;
+using ExampleMod.Models;
+using ExampleMod.Utils;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Party;
+using TaleWorlds.Core;
 
-namespace ExampleMod.Behaviors
+namespace ExampleMod.Behaviors;
+
+internal class InjuryHealingBehavior : CampaignBehaviorBase
 {
-    internal class InjuryHealingBehavior : CampaignBehaviorBase
+    public override void RegisterEvents()
     {
-        public override void RegisterEvents()
-        {
-            CampaignEvents.DailyTickPartyEvent.AddNonSerializedListener(this, OnDailyTickPartyEvent);
-        }
+        CampaignEvents.DailyTickPartyEvent.AddNonSerializedListener(this, this.OnDailyTickPartyEvent);
+    }
+    
 
-        private void OnDailyTickPartyEvent(MobileParty party)
+    private void OnDailyTickPartyEvent(MobileParty party)
+    {
+        if (party.Owner != null && party.Owner.IsHumanPlayerCharacter)
         {
-            LimbDamageManager.Instance?.ApplyHealingToInjuries();
-        }
-
-        public override void SyncData(IDataStore dataStore)
-        {
+           this.HealInjuries(party);
         }
     }
+
+    private void HealInjuries(MobileParty party)
+    {
+        Hero surgeon = party.GetEffectiveRoleHolder(SkillEffect.PerkRole.Surgeon);
+        if (surgeon != null)
+        {
+            int healingSkillValue = surgeon.GetSkillValue(DefaultSkills.Medicine);
+            
+            //Logging
+            WoundLogger.DisplayMessage($"Surgeon ({surgeon.Name}) current Medicine skill value: {healingSkillValue}");
+            
+            LimbDamageManager.Instance?.ApplyHealingToInjuries();
+        }
+        
+    }
+
+    public override void SyncData(IDataStore dataStore)
+    {
+    }
 }
+

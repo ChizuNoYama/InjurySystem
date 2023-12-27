@@ -1,4 +1,6 @@
-﻿using ExampleMod.Models;
+﻿using System;
+using System.Collections.Generic;
+using ExampleMod.Models;
 using ExampleMod.Utils;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
@@ -18,45 +20,45 @@ namespace ExampleMod.Components
 
             if(LimbDamageManager.Instance != null)
             {
-                LimbDamageManager.Instance.OnWoundApplied = this.OnWoundAppliedToAgent;
-                LimbDamageManager.Instance.OnAllInjuriesHealed = this.OnAllInjuriesHealed;
+                LimbDamageManager.Instance.OnInjuryApplied = null;
+                LimbDamageManager.Instance.OnInjuryApplied = this.OnInjuryAppliedToAgent;
 
-                this.Agent.OnAgentHealthChanged -= this.OnAgentHealthChanged;
-                this.Agent.OnAgentHealthChanged += this.OnAgentHealthChanged;
+                // TODO: Calculate Damage cap here
+                // TODO: Figure out why I wrote the above TODO... I have no idea why.
             }
         }
 
-        private void OnAgentHealthChanged(Agent agent, float oldHealth, float newHealth)
+        private void OnInjuryAppliedToAgent(BoneBodyPartType boneBodyPartType)
         {
-            if(oldHealth < newHealth)
+            WoundLogger.DisplayMessage($"{Enum.GetName(typeof(BoneBodyPartType), boneBodyPartType)} Is Injured");
+            this.ApplySkillPenalty(boneBodyPartType);
+        }
+
+        private void ApplySkillPenalty(BoneBodyPartType boneBodyPartType)
+        {
+            // TODO: Body part to skill converter here. Display what skill has been penalized and save it in the LimbManager.
+            // TODO: Calculate penalty amount based on player's Endurance/Vigor and total damage on the limb
+            
+            Hero hero = this.GetHero()!;
+
+            List<SkillObject> affectedSkills = BodyToSkillConverter.GetSkillsFromBodyPart(boneBodyPartType);
+            
+            
+            foreach (SkillObject skill in affectedSkills)
             {
-                WoundLogger.DebugLog($"=====> This Agent is healing.\n");
+                int currentSkillValue = hero.GetSkillValue(skill);
+                hero.SetSkillValue(skill, currentSkillValue - 5);
             }
         }
 
-        private void OnWoundAppliedToAgent(BoneBodyPartType boneBodyPartType, float skillPenalty)
+        internal void ApplyLimbDamage(BoneBodyPartType bodyPart, int damageInflicted)
         {
-            //TODO: Body part to skill converter here. Display what skill has been fucked and save it in the LimbManager.
-
-            //    WoundLogger.DebugLog($"=====> Before change {this.GetHero()?.GetAttributeValue(DefaultCharacterAttributes.Endurance)}");
-            //    this.GetHero()?.HeroDeveloper.RemoveAttribute(DefaultCharacterAttributes.Endurance, 2);
-            //    WoundLogger.DebugLog($"=====> After change {this.GetHero()?.GetAttributeValue(DefaultCharacterAttributes.Endurance)}");            
-        }
-
-        private void OnAllInjuriesHealed()
-        {
-            this.GetHero()?.HeroDeveloper.AddAttribute(DefaultCharacterAttributes.Endurance, 2);
-        }
-
-        internal void ApplyLimbDamage(sbyte boneIndex, int damageInflicted)
-        {
-            BoneBodyPartType bodyPartType = this.Agent.AgentVisuals.GetBoneTypeData(boneIndex).BodyPartType;
-            LimbDamageManager.Instance?.ApplyLimbDamage(bodyPartType, damageInflicted);
+            LimbDamageManager.Instance?.ApplyLimbDamage(bodyPart, damageInflicted);
         }
 
         private CharacterObject? GetCharacterObject()
         {
-            return (this.Agent.Character as CharacterObject);
+            return this.Agent.Character as CharacterObject;
         }
 
         private Hero? GetHero()
