@@ -1,13 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ExampleMod.Models;
 using ExampleMod.Utils;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
-using TaleWorlds.Core;
 using TaleWorlds.Localization;
-using TaleWorlds.MountAndBlade;
 
 namespace ExampleMod.Behaviors;
 

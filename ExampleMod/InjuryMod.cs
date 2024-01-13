@@ -1,6 +1,7 @@
 ﻿using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 using System;
+using System.Linq;
 using ExampleMod.Components;
 using TaleWorlds.Library;
 using ExampleMod.Utils;
@@ -8,6 +9,7 @@ using ExampleMod.Behaviors;
 using TaleWorlds.Core;
 using TaleWorlds.CampaignSystem;
 using ExampleMod.Models;
+using TaleWorlds.ObjectSystem;
 
 namespace ExampleMod
 {
@@ -26,7 +28,6 @@ namespace ExampleMod
             //var harmony = new Harmony(harmonyID);
 
             LimbDamageManager.Initialize();
-            PenaltyManager.Initialize();
         }
 
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
@@ -39,8 +40,11 @@ namespace ExampleMod
                 starter.AddBehavior(new SaveBehavior());
                 starter.AddBehavior(new InjuryHealingBehavior());
                 starter.AddBehavior(new InjuryInfoBehavior());
+                // game.ObjectManager.RegisterObject()
+                MBObjectManager.Instance.RegisterObject(InjurySkillEffects.Instance.OneHandedSwingSpeedPenalty);
+                WoundLogger.DebugLog($"{SkillEffect.All}");
                 // starter.AddModel(new InjuryPenaltyModel());
-                
+
                 //TODO: Figure out some kind of menu extension
                 // starter.AddGameMenu();
             }

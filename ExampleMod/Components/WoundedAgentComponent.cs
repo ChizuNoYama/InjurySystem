@@ -58,6 +58,7 @@ namespace ExampleMod.Components
             ExplainedNumber stat = new ExplainedNumber(baseNumber: 0f, includeDescriptions: true,
                 baseText: new TextObject("This is a test skill effect"));
             SkillHelper.AddSkillBonusForCharacter(DefaultSkills.OneHanded, InjurySkillEffects.Instance.OneHandedSwingSpeedPenalty, this.GetCharacterObject(), ref stat, isBonusPositive:false);
+            
         }
 
         internal void ApplyLimbDamage(BoneBodyPartType bodyPart, int damageInflicted)
