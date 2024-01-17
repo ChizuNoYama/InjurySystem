@@ -43,9 +43,7 @@ namespace ExampleMod.Components
             // TODO: Body part to skill converter here. Display what skill has been penalized and save it in the LimbManager.
             // TODO: Calculate penalty amount based on player's Endurance/Vigor and total damage on the limb
 
-            List<SkillObject> affectedSkills = BodyToSkillConverter.GetSkillsFromBodyPart(boneBodyPartType);
-            
-            // this.Hero
+            List<SkillObject> affectedSkills = BodyPartToSkillConverter.GetSkillsFromBodyPart(boneBodyPartType);
             
             foreach (SkillObject skill in affectedSkills)
             {
