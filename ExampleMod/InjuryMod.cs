@@ -37,12 +37,13 @@ namespace ExampleMod
             if(game.GameType is Campaign)
             {
                 CampaignGameStarter starter = (CampaignGameStarter)gameStarterObject;
+                InjurySkillEffects.Initialize();
                 starter.AddBehavior(new SaveBehavior());
                 starter.AddBehavior(new InjuryHealingBehavior());
                 starter.AddBehavior(new InjuryInfoBehavior());
                 // game.ObjectManager.RegisterObject()
-                MBObjectManager.Instance.RegisterObject(InjurySkillEffects.Instance.OneHandedSwingSpeedPenalty);
-                WoundLogger.DebugLog($"{SkillEffect.All}");
+                
+                // WoundLogger.DebugLog($"{SkillEffect.All}");
                 // starter.AddModel(new InjuryPenaltyModel());
 
                 //TODO: Figure out some kind of menu extension

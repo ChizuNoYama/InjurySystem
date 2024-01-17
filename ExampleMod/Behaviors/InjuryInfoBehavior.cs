@@ -25,6 +25,7 @@ public class InjuryInfoBehavior : CampaignBehaviorBase
 
     private void AddMenuItems(CampaignGameStarter gameStarter)
     {
+        // TODO: Check if this is working correctly. MEnu option i snot showing up on the town screen
         gameStarter.AddGameMenuOption(menuId: "town", optionId: _townMenuOptionId, optionText: _townMenuOptionText, condition: this.Condition, consequence: this.AssessInjuriesOnConsequence);
         gameStarter.AddGameMenu(menuId:_injuryMenuId, menuText: "Assessing Injuries\n{INJURY_INFO}", initDelegate: InjuryInfoBehavior.InjuryMenuOnInit);
         gameStarter.AddGameMenuOption(menuId:_injuryMenuId, optionId: _injuryMenuOptionId, optionText: "Done", condition: null, consequence: InjuryMenuOptionBackOnConsequence);
@@ -35,8 +36,8 @@ public class InjuryInfoBehavior : CampaignBehaviorBase
         WoundLogger.DebugLog($"{args.MenuContext.GameMenu.MenuTitle}");
         TextObject text = args.MenuContext.GameMenu.GetText();
         text.SetTextVariable("INJURY_INFO", LimbDamageManager.Instance.GetInjuryDescriptions());
-    }
 
+    }
     private void InjuryMenuOptionBackOnConsequence(MenuCallbackArgs args)
     {
         GameMenu.SwitchToMenu("town");

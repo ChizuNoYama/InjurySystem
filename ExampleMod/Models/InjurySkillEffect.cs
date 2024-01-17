@@ -3,6 +3,7 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.Core;
 using TaleWorlds.Localization;
+using TaleWorlds.ObjectSystem;
 
 namespace ExampleMod.Models;
 
@@ -17,15 +18,22 @@ public class InjurySkillEffects
     public static void Initialize()
     {
         Instance = new InjurySkillEffects();
+        Instance.InitializeAllSkillEffects();
     }
     
     public SkillEffect OneHandedSwingSpeedPenalty { get; private set; }
 
-    public void InitializeAll()
+    public void InitializeAllSkillEffects()
     {
-        Instance.OneHandedSwingSpeedPenalty.Initialize(description:new TextObject("One handed swing speed penalty: {penalty}"), 
-                                                       effectedSkills: [DefaultSkills.OneHanded, DefaultSkills.TwoHanded],
-                                                       primaryRole: SkillEffect.PerkRole.Personal, 
-                                                       incrementType: SkillEffect.EffectIncrementType.Add);
+        this.OneHandedSwingSpeedPenalty = MBObjectManager.Instance.RegisterPresumedObject(new SkillEffect("SwingSpeedDebuff"));
+        // this.OneHandedSwingSpeedPenalty.Initialize(description:new TextObject("One handed swing speed penalty: {penalty}"), 
+        //                                            effectedSkills: new SkillObject[]{DefaultSkills.OneHanded, DefaultSkills.TwoHanded},
+        //                                            primaryRole: SkillEffect.PerkRole.Personal, 
+        //                                            incrementType: SkillEffect.EffectIncrementType.AddFactor,
+        //                                            primaryBonus:0.5f,
+        //                                            primaryBaseValue:1f);
+        
+        
+        // SkillEffect.All.Add(this.OneHandedSwingSpeedPenalty);
     }
 }

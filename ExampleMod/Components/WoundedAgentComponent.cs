@@ -35,16 +35,17 @@ namespace ExampleMod.Components
         private void OnInjuryAppliedToAgent(BoneBodyPartType boneBodyPartType)
         {
             WoundLogger.DisplayMessage($"{Enum.GetName(typeof(BoneBodyPartType), boneBodyPartType)} Is Injured");
-            this.ApplySkillPenalty(boneBodyPartType);
+            this.ApplyPenalty(boneBodyPartType);
         }
 
-        private void ApplySkillPenalty(BoneBodyPartType boneBodyPartType)
+        private void ApplyPenalty(BoneBodyPartType boneBodyPartType)
         {
             // TODO: Body part to skill converter here. Display what skill has been penalized and save it in the LimbManager.
             // TODO: Calculate penalty amount based on player's Endurance/Vigor and total damage on the limb
 
             List<SkillObject> affectedSkills = BodyToSkillConverter.GetSkillsFromBodyPart(boneBodyPartType);
             
+            // this.Hero
             
             foreach (SkillObject skill in affectedSkills)
             {
