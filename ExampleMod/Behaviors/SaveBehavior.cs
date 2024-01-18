@@ -28,8 +28,15 @@ namespace ExampleMod.Behaviors
             {
                 string jsonString = "";
                 dataStore.SyncData(_saveDataKey, ref jsonString);
-                Dictionary<BoneBodyPartType, LimbDamage> data = JsonConvert.DeserializeObject<Dictionary<BoneBodyPartType, LimbDamage>>(jsonString);
-                LimbDamageManager.Initialize(data);
+                if (string.IsNullOrWhiteSpace(jsonString))
+                {
+                    Dictionary<BoneBodyPartType, LimbDamage> data = JsonConvert.DeserializeObject<Dictionary<BoneBodyPartType, LimbDamage>>(jsonString)!;
+                    LimbDamageManager.Initialize(data);
+                }
+                else
+                {
+                    LimbDamageManager.Initialize();
+                }
 
                 WoundLogger.DebugLog($"=====> Load data from the store: {LimbDamageManager.Instance != null}");
             }

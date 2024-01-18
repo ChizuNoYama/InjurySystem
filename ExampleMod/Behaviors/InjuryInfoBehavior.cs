@@ -35,7 +35,7 @@ public class InjuryInfoBehavior : CampaignBehaviorBase
     {
         WoundLogger.DebugLog($"{args.MenuContext.GameMenu.MenuTitle}");
         TextObject text = args.MenuContext.GameMenu.GetText();
-        text.SetTextVariable("INJURY_INFO", LimbDamageManager.Instance.GetInjuryDescriptions());
+        text.SetTextVariable("INJURY_INFO", LimbDamageManager.Instance!.GetInjuryDescriptions());
 
     }
     private void InjuryMenuOptionBackOnConsequence(MenuCallbackArgs args)
@@ -50,6 +50,9 @@ public class InjuryInfoBehavior : CampaignBehaviorBase
 
     private bool Condition(MenuCallbackArgs args)
     {
-        return LimbDamageManager.Instance.HasInjuries;
+        // return LimbDamageManager.Instance.HasInjuries;
+        
+        // TODO: Always return true for now
+        return true;
     }
 }

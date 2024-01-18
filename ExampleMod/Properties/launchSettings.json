@@ -8,7 +8,7 @@
     "Bannerlord Execute": {
       "commandName": "Executable",
       "executablePath": "E:\\Steam Games\\steamapps\\common\\Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\Bannerlord.exe",
-      "commandLineArgs": "/singleplayer _MODULES_*Native*SandBoxCore*CustomBattle*SandBox*StoryMode*ExampleMod*_MODULES_",
+      "commandLineArgs": "/singleplayer _MODULES_*Bannerlord.Harmony*Native*SandBoxCore*CustomBattle*SandBox*StoryMode*ExampleMod*_MODULES_ /continuegame",
       "workingDirectory": "E:\\Steam Games\\steamapps\\common\\Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client"
     }
   }

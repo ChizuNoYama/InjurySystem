@@ -9,12 +9,15 @@ using ExampleMod.Behaviors;
 using TaleWorlds.Core;
 using TaleWorlds.CampaignSystem;
 using ExampleMod.Models;
+using HarmonyLib;
 using TaleWorlds.ObjectSystem;
 
 namespace ExampleMod
 {
     public class InjuryMod : MBSubModuleBase
     {
+        public const string HarmonyId = "com.chiz.injury";
+        
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
@@ -22,32 +25,28 @@ namespace ExampleMod
                                                                               name: new TextObject("Message", null),
                                                                               orderIndex: 9990,
                                                                               action: () => { InformationManager.DisplayMessage(new InformationMessage("Hello World!")); },
-                                                                              isDisabledAndReason: () => { return (false, null); }));
-
-            //string harmonyID = this.GetType().Assembly.FullName;
-            //var harmony = new Harmony(harmonyID);
-
+                                                                              isDisabledAndReason: () => (false, null)));
+            
+            InitHarmony();
             LimbDamageManager.Initialize();
+        }
+
+        public static void InitHarmony()
+        {
+            Harmony harmony = new Harmony(HarmonyId);
+            harmony.PatchAll();
         }
 
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
             base.OnGameStart(game, gameStarterObject);
-
             if(game.GameType is Campaign)
             {
                 CampaignGameStarter starter = (CampaignGameStarter)gameStarterObject;
-                InjurySkillEffects.Initialize();
+                InjuryPenaltyManager.Initialize();
                 starter.AddBehavior(new SaveBehavior());
                 starter.AddBehavior(new InjuryHealingBehavior());
                 starter.AddBehavior(new InjuryInfoBehavior());
-                // game.ObjectManager.RegisterObject()
-                
-                // WoundLogger.DebugLog($"{SkillEffect.All}");
-                // starter.AddModel(new InjuryPenaltyModel());
-
-                //TODO: Figure out some kind of menu extension
-                // starter.AddGameMenu();
             }
         }
 

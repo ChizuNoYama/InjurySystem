@@ -19,22 +19,13 @@ public class InjuryPenaltyManager
     public static void Initialize()
     {
         Instance = new InjuryPenaltyManager();
-        Instance.InitializeAllSkillEffects();
+        Instance.RegisterSkillEffects();
     }
     
     public SkillEffect SwingSpeedPenalty { get; private set; }
 
-    public void InitializeAllSkillEffects()
+    public void RegisterSkillEffects()
     {
-        this.SwingSpeedPenalty = MBObjectManager.Instance.RegisterPresumedObject(new SkillEffect("SwingSpeedDebuff"));
-        this.SwingSpeedPenalty.Initialize(description:new TextObject("One handed swing speed penalty: {penalty}"), 
-                                           effectedSkills: new SkillObject[]{DefaultSkills.OneHanded, DefaultSkills.TwoHanded},
-                                           primaryRole: SkillEffect.PerkRole.Personal, 
-                                           incrementType: SkillEffect.EffectIncrementType.AddFactor,
-                                           primaryBonus:0.5f,
-                                           primaryBaseValue:1f);
-
-
-        // SkillEffect.All.Add(this.SwingSpeedPenalty);
+        
     }
 }

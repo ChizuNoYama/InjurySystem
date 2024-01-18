@@ -1,5 +1,8 @@
 ﻿using ExampleMod.Components;
 using ExampleMod.Utils;
+using TaleWorlds.CampaignSystem;
+using TaleWorlds.Core;
+using TaleWorlds.Engine;
 using TaleWorlds.MountAndBlade;
 
 namespace ExampleMod.Behaviors

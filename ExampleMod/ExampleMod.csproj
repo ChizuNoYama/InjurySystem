@@ -13,6 +13,7 @@
 
   <PropertyGroup Condition="'$(Configuration)'=='DEBUG'">
     <OutputPath>E:\Steam Games\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\ExampleMod\bin\Win64_Shipping_Client</OutputPath>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='RELEASE'">
@@ -229,6 +230,10 @@
     <Reference Include="TaleWorlds.TwoDimension.Standalone">
       <HintPath>$(TaleWorldAssmbliesLocation)\TaleWorlds.TwoDimension.Standalone.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bannerlord.Lib.Harmony" Version="2.2.2" />
   </ItemGroup>
 
 </Project>

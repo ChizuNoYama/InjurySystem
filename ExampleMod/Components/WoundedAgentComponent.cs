@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using ExampleMod.Models;
 using ExampleMod.Utils;
-using Helpers;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.Core;
-using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 
 namespace ExampleMod.Components
@@ -25,49 +21,49 @@ namespace ExampleMod.Components
                 LimbDamageManager.Instance.OnInjuryApplied = null;
                 LimbDamageManager.Instance.OnInjuryApplied = this.OnInjuryAppliedToAgent;
 
-                // TODO: Calculate Damage cap here
+                // TODO: Calculate Damage cap here based on Endurance.
                 // TODO: Figure out why I wrote the above TODO... I have no idea why.
             }
+            
+            // TODO: Harmony would come in handy here because the properties gets set after the Agents are added to the mission. 
+            
+
         }
-        
-        private Hero _hero => this.GetCharacterObject()?.HeroObject!;
 
         private void OnInjuryAppliedToAgent(BoneBodyPartType boneBodyPartType)
         {
-            WoundLogger.DisplayMessage($"{Enum.GetName(typeof(BoneBodyPartType), boneBodyPartType)} Is Injured");
-            this.ApplyPenalty(boneBodyPartType);
+            WoundLogger.DisplayMessage($"{Enum.GetName(typeof(BoneBodyPartType), boneBodyPartType)} is injured");
+            this.ApplyPenaltyToSkillBonus(boneBodyPartType);
         }
 
-        private void ApplyPenalty(BoneBodyPartType boneBodyPartType)
+        internal void ApplyPenaltyToSkillBonus(BoneBodyPartType boneBodyPartType)
         {
             // TODO: Body part to skill converter here. Display what skill has been penalized and save it in the LimbManager.
             // TODO: Calculate penalty amount based on player's Endurance/Vigor and total damage on the limb
 
-            List<SkillObject> affectedSkills = BodyPartToSkillConverter.GetSkillsFromBodyPart(boneBodyPartType);
+            // Testing how to leverage the SkillHelper to change values from SkillEffects.
+            // WoundLogger.DebugLog($"Current OneHandedDamage: {DefaultSkillEffects.OneHandedDamage.GetPrimaryValue(Hero.MainHero.GetSkillValue(DefaultSkills.OneHanded))}");
+            // ExplainedNumber stat = new ExplainedNumber(0.5f, includeDescriptions: true, new TextObject("New OneHandedDamage"));
+            // SkillHelper.AddSkillBonusForCharacter(DefaultSkills.OneHanded, DefaultSkillEffects.OneHandedDamage, Hero.MainHero.CharacterObject ,ref stat, isBonusPositive: false, );
             
-            foreach (SkillObject skill in affectedSkills)
-            {
-                int currentSkillValue = _hero!.GetSkillValue(skill);
-                _hero.SetSkillValue(skill, currentSkillValue - 5);
-            }
-        }
-
-        private void ApplySkillEffectPenalty(BoneBodyPartType bodyPart)
-        {
-            ExplainedNumber stat = new ExplainedNumber(baseNumber: 0f, includeDescriptions: true,
-                baseText: new TextObject("This is a test skill effect"));
-            SkillHelper.AddSkillBonusForCharacter(DefaultSkills.OneHanded, InjurySkillEffects.Instance.OneHandedSwingSpeedPenalty, this.GetCharacterObject(), ref stat, isBonusPositive:false);
+            //Testing AgentDrivenProperties
+            // this.Agent.AgentDrivenProperties.
             
+            //This is temporary until I find a way to fine tune how debuffs will work (i.e. weapon swing speed. persuasion calculations) outside of just changing the skill level.
+            // The idea is that a person's skill does not deteriorate as a result of an injury, just the stats of how things are calculated
+             // List<SkillObject> affectedSkills = BodyPartToSkillConverter.GetSkillsFromBodyPart(boneBodyPartType);
+             //
+             // foreach (SkillObject skill in affectedSkills)
+             // {
+             //     int currentSkillValue = Hero.MainHero.GetSkillValue(skill);
+             //     int changeAmount = currentSkillValue < 3 ? currentSkillValue : 3; // TODO: this looks a little fishy. Check if there is any way the skill can be a negative number=
+             //     Hero.MainHero.SetSkillValue(skill, currentSkillValue - changeAmount);
+             // }
         }
 
         internal void ApplyLimbDamage(BoneBodyPartType bodyPart, int damageInflicted)
         {
             LimbDamageManager.Instance?.ApplyLimbDamage(bodyPart, damageInflicted);
-        }
-
-        private CharacterObject? GetCharacterObject()
-        {
-            return this.Agent.Character as CharacterObject;
         }
     }
 }
