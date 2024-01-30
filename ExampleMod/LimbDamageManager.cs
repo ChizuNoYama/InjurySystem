@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Extensions;
+using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 
 namespace ExampleMod.Models
@@ -11,28 +13,27 @@ namespace ExampleMod.Models
     {
         private LimbDamageManager()
         {
-            DamagedLimbs = new Dictionary<BoneBodyPartType, LimbDamage>();
+            DamagedLimbs = new Dictionary<BoneBodyPartType, BodyPartStatus>();
         }
-
-        private const int _woundDamageCap = 5; // TODO: Calculate wound damage cap based on Hero's Endurance
         
         public Action<BoneBodyPartType>? OnInjuryApplied { get; set; }
         public Action? OnAllInjuriesHealed { get; set; }
-        public Dictionary<BoneBodyPartType, LimbDamage> DamagedLimbs { get; private set; }
+        public Dictionary<BoneBodyPartType, BodyPartStatus> DamagedLimbs { get; private set; }
+        public Dictionary<SkillEffect, Penalty> Penalties { get; private set; }
         public static LimbDamageManager? Instance { get; private set; }
         public bool HasInjuries { get; set; }
 
-        public static void Initialize(Dictionary<BoneBodyPartType, LimbDamage>? damagedLimbs = null )
+        public static void Initialize(Dictionary<BoneBodyPartType, BodyPartStatus>? damagedLimbs = null )
         {
             Instance = new LimbDamageManager
             {
-                DamagedLimbs = damagedLimbs ?? new Dictionary<BoneBodyPartType, LimbDamage>()
+                DamagedLimbs = damagedLimbs ?? new Dictionary<BoneBodyPartType, BodyPartStatus>()
             };
         }
 
         public void ResetLimbDamage(BoneBodyPartType bodyPartType)
         {
-            if (this.DamagedLimbs.TryGetValue(bodyPartType, out LimbDamage limb))
+            if (this.DamagedLimbs.TryGetValue(bodyPartType, out BodyPartStatus limb))
             {
                 limb.TotalDamage = 0;
             }
@@ -43,9 +44,9 @@ namespace ExampleMod.Models
             // TODO: Input healing amount and calculate how much based on amount healed from party Surgeon
             if (this.HasInjuries)
             {
-                foreach (KeyValuePair<BoneBodyPartType,LimbDamage>  damage in DamagedLimbs)
+                foreach (KeyValuePair<BoneBodyPartType,BodyPartStatus>  damage in DamagedLimbs)
                 {
-                    LimbDamage ld = damage.Value;
+                    BodyPartStatus ld = damage.Value;
                     if (!ld.IsInjured && ld.TotalDamage > 0)
                     {
                         ld.TotalDamage -= 2;
@@ -74,21 +75,21 @@ namespace ExampleMod.Models
 
         public void ApplyLimbDamage(BoneBodyPartType bodyPartType, int damage)
         {
-            LimbDamage limbDamage = new LimbDamage();
+            BodyPartStatus bodyPartStatus = new BodyPartStatus();
             if (!DamagedLimbs.ContainsKey(bodyPartType))
             {
-                limbDamage.TotalDamage = damage;
-                limbDamage.IsInjured = damage >= _woundDamageCap;
-                this.HasInjuries = limbDamage.IsInjured;
+                bodyPartStatus.TotalDamage = damage;
+                bodyPartStatus.IsInjured = damage >= _injuredCapDamage;
+                this.HasInjuries = bodyPartStatus.IsInjured;
 
-                DamagedLimbs[bodyPartType] = limbDamage;
+                DamagedLimbs[bodyPartType] = bodyPartStatus;
             }
             else
             {
-                if (DamagedLimbs[bodyPartType].TotalDamage < _woundDamageCap && !DamagedLimbs[bodyPartType].IsInjured)
+                if (DamagedLimbs[bodyPartType].TotalDamage < _injuredCapDamage && !DamagedLimbs[bodyPartType].IsInjured)
                 {
                     DamagedLimbs[bodyPartType].TotalDamage += damage;
-                    DamagedLimbs[bodyPartType].IsInjured = DamagedLimbs[bodyPartType].TotalDamage >= _woundDamageCap;
+                    DamagedLimbs[bodyPartType].IsInjured = DamagedLimbs[bodyPartType].TotalDamage >= _injuredCapDamage;
 
                     if (DamagedLimbs[bodyPartType].IsInjured)
                     {
@@ -110,7 +111,7 @@ namespace ExampleMod.Models
         
             foreach (BoneBodyPartType bodyPart in keys)
             {
-                LimbDamage ld = this.DamagedLimbs[bodyPart];
+                BodyPartStatus ld = this.DamagedLimbs[bodyPart];
                 string injuredText = ld.IsInjured ? "Yes" : "No";
                 infoBuilder.AppendLine($"{bodyPart.ToString()}: {ld.TotalDamage}\nInjured: {injuredText}\n");
             }

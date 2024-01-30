@@ -30,7 +30,7 @@ namespace ExampleMod.Behaviors
                 dataStore.SyncData(_saveDataKey, ref jsonString);
                 if (string.IsNullOrWhiteSpace(jsonString))
                 {
-                    Dictionary<BoneBodyPartType, LimbDamage> data = JsonConvert.DeserializeObject<Dictionary<BoneBodyPartType, LimbDamage>>(jsonString)!;
+                    Dictionary<BoneBodyPartType, BodyPartStatus> data = JsonConvert.DeserializeObject<Dictionary<BoneBodyPartType, BodyPartStatus>>(jsonString)!;
                     LimbDamageManager.Initialize(data);
                 }
                 else

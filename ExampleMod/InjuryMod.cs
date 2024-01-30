@@ -43,7 +43,6 @@ namespace ExampleMod
             if(game.GameType is Campaign)
             {
                 CampaignGameStarter starter = (CampaignGameStarter)gameStarterObject;
-                InjuryPenaltyManager.Initialize();
                 starter.AddBehavior(new SaveBehavior());
                 starter.AddBehavior(new InjuryHealingBehavior());
                 starter.AddBehavior(new InjuryInfoBehavior());

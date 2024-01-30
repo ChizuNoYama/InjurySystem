@@ -1,6 +1,6 @@
 ﻿namespace ExampleMod.Models
 {
-    internal class LimbDamage
+    internal class BodyPartStatus
     {
         public int TotalDamage { set; get; }
         public bool IsInjured { set; get; }
