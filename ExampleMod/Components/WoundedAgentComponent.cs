@@ -1,7 +1,9 @@
 ﻿using System;
 using ExampleMod.Models;
 using ExampleMod.Utils;
+using Helpers;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 
 namespace ExampleMod.Components
@@ -20,20 +22,14 @@ namespace ExampleMod.Components
             {
                 LimbDamageManager.Instance.OnInjuryApplied = null;
                 LimbDamageManager.Instance.OnInjuryApplied = this.OnInjuryAppliedToAgent;
-
-                // TODO: Calculate Damage cap here based on Endurance.
-                // TODO: Figure out why I wrote the above TODO... I have no idea why.
             }
-            
-            // TODO: Harmony would come in handy here because the properties gets set after the Agents are added to the mission. 
-            
-
         }
 
         private void OnInjuryAppliedToAgent(BoneBodyPartType boneBodyPartType)
         {
-            WoundLogger.DisplayMessage($"{Enum.GetName(typeof(BoneBodyPartType), boneBodyPartType)} is injured");
-            this.ApplyPenaltyToSkillBonus(boneBodyPartType);
+            BodyPartStatus status = LimbDamageManager.Instance.DamagedLimbs[boneBodyPartType];
+            WoundLogger.DisplayMessage($"{Enum.GetName(typeof(BoneBodyPartType), boneBodyPartType)} is {status.Severity.ToString()}");
+            // this.ApplyPenaltyToSkillBonus(boneBodyPartType);
         }
 
         internal void ApplyPenaltyToSkillBonus(BoneBodyPartType boneBodyPartType)
@@ -63,7 +59,14 @@ namespace ExampleMod.Components
 
         internal void ApplyLimbDamage(BoneBodyPartType bodyPart, int damageInflicted)
         {
-            LimbDamageManager.Instance?.ApplyLimbDamage(bodyPart, damageInflicted);
+            if (LimbDamageManager.Instance != null)
+            {
+                int maxAttValue = Campaign.Current.Models.CharacterDevelopmentModel.MaxAttribute;
+                int limbDamage = LimbDamageManager.Instance.CalculateLimbDamage(damageInflicted, 
+                                                                    Hero.MainHero.GetAttributeValue(DefaultCharacterAttributes.Endurance), 
+                                                                                maxAttValue);
+                LimbDamageManager.Instance.ApplyLimbDamage(bodyPart, limbDamage);
+            }
         }
     }
 }

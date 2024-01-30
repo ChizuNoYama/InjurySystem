@@ -33,7 +33,10 @@ internal class InjuryHealingBehavior : CampaignBehaviorBase
             //Logging
             WoundLogger.DisplayMessage($"Surgeon ({surgeon.Name}) current Medicine skill value: {healingSkillValue}");
             
-            LimbDamageManager.Instance?.ApplyHealingToInjuries();
+            // TODO: Calculate healing here based off surgeon
+            int limbHealingAmount = 2;
+            
+            LimbDamageManager.Instance?.ApplyHealingToInjuries(limbHealingAmount);
         }
         
     }

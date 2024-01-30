@@ -2,120 +2,114 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.Extensions;
-using TaleWorlds.Core;
+using ExampleMod.Utils;
 using TaleWorlds.MountAndBlade;
+using TaleWorlds.TwoDimension;
 
-namespace ExampleMod.Models
+namespace ExampleMod.Models;
+
+internal class LimbDamageManager
 {
-    internal class LimbDamageManager
-    {
-        private LimbDamageManager()
-        {
-            DamagedLimbs = new Dictionary<BoneBodyPartType, BodyPartStatus>();
-        }
+    private int _injuredCapDamage = 100;
         
-        public Action<BoneBodyPartType>? OnInjuryApplied { get; set; }
-        public Action? OnAllInjuriesHealed { get; set; }
-        public Dictionary<BoneBodyPartType, BodyPartStatus> DamagedLimbs { get; private set; }
-        public Dictionary<SkillEffect, Penalty> Penalties { get; private set; }
-        public static LimbDamageManager? Instance { get; private set; }
-        public bool HasInjuries { get; set; }
+    private LimbDamageManager()
+    {
+        DamagedLimbs = new Dictionary<BoneBodyPartType, BodyPartStatus>();
+    }
+        
+    public Action<BoneBodyPartType>? OnInjuryApplied { get; set; }
+    public Action? OnAllInjuriesHealed { get; set; }
+    public Dictionary<BoneBodyPartType, BodyPartStatus> DamagedLimbs { get; private set; }
+    public static LimbDamageManager? Instance { get; private set; }
 
-        public static void Initialize(Dictionary<BoneBodyPartType, BodyPartStatus>? damagedLimbs = null )
+    public static void Initialize(Dictionary<BoneBodyPartType, BodyPartStatus>? damagedLimbs = null )
+    {
+        Instance = new LimbDamageManager
         {
-            Instance = new LimbDamageManager
+            DamagedLimbs = damagedLimbs ?? new Dictionary<BoneBodyPartType, BodyPartStatus>()
+        };
+    }
+
+    public void ResetLimbDamage(BoneBodyPartType bodyPartType)
+    {
+        if (this.DamagedLimbs.TryGetValue(bodyPartType, out BodyPartStatus limb))
+        {
+            limb.TotalDamage = 0;
+            limb.Severity = InjurySeverityUtilities.GetSeverity(limb.TotalDamage, _injuredCapDamage);
+        }
+    }
+
+    // TODO: Input healing amount and calculate how much based on amount healed from party Surgeon
+    public void ApplyHealingToInjuries(int healingAmount)
+    {
+        foreach (KeyValuePair<BoneBodyPartType,BodyPartStatus>  damage in DamagedLimbs)
+        {
+            BodyPartStatus ld = damage.Value;
+            ld.TotalDamage -= healingAmount;
+
+            // Clamp TotalDamage to 0 if it is negative
+            if (ld.TotalDamage < 0)
             {
-                DamagedLimbs = damagedLimbs ?? new Dictionary<BoneBodyPartType, BodyPartStatus>()
+                ld.TotalDamage = 0;
+            }
+
+            ld.Severity = InjurySeverityUtilities.GetSeverity(ld.TotalDamage, _injuredCapDamage);
+        }
+
+        int woundedLimbsCount = this.DamagedLimbs.Count(x => x.Value.IsInjured);
+        if (woundedLimbsCount == 0)
+        {
+            OnAllInjuriesHealed?.Invoke();
+        }
+    }
+
+    public void ApplyLimbDamage(BoneBodyPartType bodyPartType, int limbDamage)
+    {
+        if (!DamagedLimbs.ContainsKey(bodyPartType))
+        {
+            DamagedLimbs[bodyPartType] = new BodyPartStatus
+            {
+                TotalDamage = limbDamage
             };
         }
-
-        public void ResetLimbDamage(BoneBodyPartType bodyPartType)
+        else
         {
-            if (this.DamagedLimbs.TryGetValue(bodyPartType, out BodyPartStatus limb))
+            if (DamagedLimbs[bodyPartType].Severity !=  InjurySeverity.Mangled)
             {
-                limb.TotalDamage = 0;
+                DamagedLimbs[bodyPartType].TotalDamage += limbDamage;
             }
         }
-
-        public void ApplyHealingToInjuries()
+            
+        if (this.DamagedLimbs[bodyPartType].TotalDamage > _injuredCapDamage)
         {
-            // TODO: Input healing amount and calculate how much based on amount healed from party Surgeon
-            if (this.HasInjuries)
-            {
-                foreach (KeyValuePair<BoneBodyPartType,BodyPartStatus>  damage in DamagedLimbs)
-                {
-                    BodyPartStatus ld = damage.Value;
-                    if (!ld.IsInjured && ld.TotalDamage > 0)
-                    {
-                        ld.TotalDamage -= 2;
-                    }
-                    else
-                    {
-                        ld.TotalDamage -= 1;
-                    }
-
-                    // Clamp TotalDamage to 0 if it is negative
-                    if (ld.TotalDamage <= 0)
-                    {
-                        ld.IsInjured = false;
-                        ld.TotalDamage = 0;
-                    }
-                }
-
-                int woundedLimbsCount = this.DamagedLimbs.Count(x => x.Value.IsInjured);
-                if (woundedLimbsCount == 0)
-                {
-                    this.HasInjuries = false;
-                    OnAllInjuriesHealed?.Invoke();
-                }
-            }
+            this.DamagedLimbs[bodyPartType].TotalDamage = _injuredCapDamage;
         }
-
-        public void ApplyLimbDamage(BoneBodyPartType bodyPartType, int damage)
-        {
-            BodyPartStatus bodyPartStatus = new BodyPartStatus();
-            if (!DamagedLimbs.ContainsKey(bodyPartType))
-            {
-                bodyPartStatus.TotalDamage = damage;
-                bodyPartStatus.IsInjured = damage >= _injuredCapDamage;
-                this.HasInjuries = bodyPartStatus.IsInjured;
-
-                DamagedLimbs[bodyPartType] = bodyPartStatus;
-            }
-            else
-            {
-                if (DamagedLimbs[bodyPartType].TotalDamage < _injuredCapDamage && !DamagedLimbs[bodyPartType].IsInjured)
-                {
-                    DamagedLimbs[bodyPartType].TotalDamage += damage;
-                    DamagedLimbs[bodyPartType].IsInjured = DamagedLimbs[bodyPartType].TotalDamage >= _injuredCapDamage;
-
-                    if (DamagedLimbs[bodyPartType].IsInjured)
-                    {
-                        this.HasInjuries = true;
-                    }
-                }
-            }
-            if(DamagedLimbs[bodyPartType].IsInjured && !DamagedLimbs[bodyPartType].PenaltyApplied)
-            { 
-                OnInjuryApplied?.Invoke(bodyPartType);
-                this.DamagedLimbs[bodyPartType].PenaltyApplied = true;
-            }
-        }
-        
-        public string GetInjuryDescriptions()
-        {
-            StringBuilder infoBuilder = new();
-            var keys = this.DamagedLimbs.Keys;
-        
-            foreach (BoneBodyPartType bodyPart in keys)
-            {
-                BodyPartStatus ld = this.DamagedLimbs[bodyPart];
-                string injuredText = ld.IsInjured ? "Yes" : "No";
-                infoBuilder.AppendLine($"{bodyPart.ToString()}: {ld.TotalDamage}\nInjured: {injuredText}\n");
-            }
-            return infoBuilder.ToString();
-        } 
+            
+        //Clamp the value if it is over the cap
+        this.DamagedLimbs[bodyPartType].TotalDamage = Mathf.Clamp(this.DamagedLimbs[bodyPartType].TotalDamage, _injuredCapDamage, _injuredCapDamage);
+        this.DamagedLimbs[bodyPartType].Severity = InjurySeverityUtilities.GetSeverity(this.DamagedLimbs[bodyPartType].TotalDamage, _injuredCapDamage);
     }
+
+    public int CalculateLimbDamage(int agentDamageTaken, int enduranceLevel, int maxLevelEnduranceLevel)
+    {
+        if (enduranceLevel != maxLevelEnduranceLevel)
+        {
+            return agentDamageTaken * ((maxLevelEnduranceLevel - enduranceLevel) / maxLevelEnduranceLevel); 
+        }
+        return agentDamageTaken;
+    }
+        
+    public string GetInjuryDescriptions()
+    {
+        StringBuilder infoBuilder = new();
+        var keys = this.DamagedLimbs.Keys;
+        
+        foreach (BoneBodyPartType bodyPart in keys)
+        {
+            BodyPartStatus ld = this.DamagedLimbs[bodyPart];
+            string injuredText = ld.IsInjured ? "Yes" : "No";
+            infoBuilder.AppendLine($"{bodyPart.ToString()}: {ld.TotalDamage}\nInjured: {injuredText}\n");
+        }
+        return infoBuilder.ToString();
+    } 
 }
