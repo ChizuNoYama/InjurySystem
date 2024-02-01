@@ -1,10 +1,10 @@
-using ExampleMod.Models;
-using ExampleMod.Utils;
+using InjuryMod.Models;
+using InjuryMod.Utils;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.Localization;
 
-namespace ExampleMod.Behaviors;
+namespace InjuryMod.Behaviors;
 
 public class InjuryInfoBehavior : CampaignBehaviorBase
 {

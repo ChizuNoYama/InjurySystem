@@ -1,12 +1,12 @@
 ﻿using System;
-using ExampleMod.Models;
-using ExampleMod.Utils;
 using Helpers;
+using InjuryMod.Models;
+using InjuryMod.Utils;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 
-namespace ExampleMod.Components
+namespace InjuryMod.Components
 {
     internal class WoundedAgentComponent : AgentComponent
     {
@@ -27,7 +27,7 @@ namespace ExampleMod.Components
 
         private void OnInjuryAppliedToAgent(BoneBodyPartType boneBodyPartType)
         {
-            BodyPartStatus status = LimbDamageManager.Instance.DamagedLimbs[boneBodyPartType];
+            BodyPartStatus status = LimbDamageManager.Instance!.DamagedLimbs[boneBodyPartType];
             WoundLogger.DisplayMessage($"{Enum.GetName(typeof(BoneBodyPartType), boneBodyPartType)} is {status.Severity.ToString()}");
             // this.ApplyPenaltyToSkillBonus(boneBodyPartType);
         }

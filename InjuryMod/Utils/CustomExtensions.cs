@@ -1,6 +1,6 @@
 ﻿using TaleWorlds.MountAndBlade;
 
-namespace ExampleMod.Utils
+namespace InjuryMod.Utils
 {
     internal static class CustomExtensions
     {

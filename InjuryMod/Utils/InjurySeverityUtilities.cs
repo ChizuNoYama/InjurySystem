@@ -1,11 +1,11 @@
-using ExampleMod.Models;
+using InjuryMod.Models;
 using TaleWorlds.CampaignSystem.GameMenus.GameMenuInitializationHandlers;
 
-namespace ExampleMod.Utils;
+namespace InjuryMod.Utils;
 
 public static class InjurySeverityUtilities
 {
-    public static float SeverityToPenalty(InjurySeverity severity)
+    public static float GetPenalty(InjurySeverity severity)
     {
         switch (severity)
         {

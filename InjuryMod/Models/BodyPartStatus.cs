@@ -1,4 +1,4 @@
-﻿namespace ExampleMod.Models
+﻿namespace InjuryMod.Models
 {
     internal class BodyPartStatus
     {

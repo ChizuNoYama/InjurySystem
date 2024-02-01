@@ -1,11 +1,11 @@
-﻿using ExampleMod.Components;
-using ExampleMod.Utils;
+﻿using InjuryMod.Components;
+using InjuryMod.Utils;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Engine;
 using TaleWorlds.MountAndBlade;
 
-namespace ExampleMod.Behaviors
+namespace InjuryMod.Behaviors
 {
     internal class WoundMissionLogic : MissionLogic
     {

@@ -1,11 +1,11 @@
 ﻿using System;
-using ExampleMod.Models;
-using ExampleMod.Utils;
+using InjuryMod.Models;
+using InjuryMod.Utils;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.Core;
 
-namespace ExampleMod.Behaviors;
+namespace InjuryMod.Behaviors;
 
 internal class InjuryHealingBehavior : CampaignBehaviorBase
 {

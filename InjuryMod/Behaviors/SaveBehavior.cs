@@ -1,11 +1,11 @@
-﻿using ExampleMod.Models;
-using ExampleMod.Utils;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using InjuryMod.Models;
+using InjuryMod.Utils;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.MountAndBlade;
 
-namespace ExampleMod.Behaviors
+namespace InjuryMod.Behaviors
 {
     internal class SaveBehavior : CampaignBehaviorBase
     {

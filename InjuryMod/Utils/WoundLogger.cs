@@ -1,7 +1,7 @@
 ﻿using TaleWorlds.Library;
 using Debug = System.Diagnostics.Debug;
 
-namespace ExampleMod.Utils
+namespace InjuryMod.Utils
 {
     internal static class WoundLogger
     {

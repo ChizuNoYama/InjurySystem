@@ -9,15 +9,16 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>preview</LangVersion>
     <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
+    <RootNamespace>InjuryMod</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='DEBUG'">
-    <OutputPath>E:\Steam Games\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\ExampleMod\bin\Win64_Shipping_Client</OutputPath>
+    <OutputPath>E:\Steam Games\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\InjuryMod\bin\Win64_Shipping_Client</OutputPath>
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='RELEASE'">
-    <BaseOutputPath>E:\Steam Games\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\ExampleMod\bin\Win64_Shipping_Client</BaseOutputPath>
+    <BaseOutputPath>E:\Steam Games\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\InjuryMod\bin\Win64_Shipping_Client</BaseOutputPath>
   </PropertyGroup>
 
   <PropertyGroup>

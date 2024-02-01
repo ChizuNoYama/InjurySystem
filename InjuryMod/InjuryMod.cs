@@ -2,17 +2,17 @@
 using TaleWorlds.MountAndBlade;
 using System;
 using System.Linq;
-using ExampleMod.Components;
 using TaleWorlds.Library;
-using ExampleMod.Utils;
-using ExampleMod.Behaviors;
+using InjuryMod.Utils;
 using TaleWorlds.Core;
 using TaleWorlds.CampaignSystem;
-using ExampleMod.Models;
 using HarmonyLib;
+using InjuryMod.Behaviors;
+using InjuryMod.Components;
+using InjuryMod.Models;
 using TaleWorlds.ObjectSystem;
 
-namespace ExampleMod
+namespace InjuryMod
 {
     public class InjuryMod : MBSubModuleBase
     {

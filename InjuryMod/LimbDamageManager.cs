@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ExampleMod.Utils;
+using InjuryMod.Utils;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.TwoDimension;
 
-namespace ExampleMod.Models;
+namespace InjuryMod.Models;
 
 internal class LimbDamageManager
 {
@@ -86,7 +86,6 @@ internal class LimbDamageManager
         }
             
         //Clamp the value if it is over the cap
-        this.DamagedLimbs[bodyPartType].TotalDamage = Mathf.Clamp(this.DamagedLimbs[bodyPartType].TotalDamage, _injuredCapDamage, _injuredCapDamage);
         this.DamagedLimbs[bodyPartType].Severity = InjurySeverityUtilities.GetSeverity(this.DamagedLimbs[bodyPartType].TotalDamage, _injuredCapDamage);
     }
 
@@ -94,9 +93,11 @@ internal class LimbDamageManager
     {
         if (enduranceLevel != maxLevelEnduranceLevel)
         {
-            return agentDamageTaken * ((maxLevelEnduranceLevel - enduranceLevel) / maxLevelEnduranceLevel); 
+            int limbDamage = (int)(agentDamageTaken * ((maxLevelEnduranceLevel - enduranceLevel) / (float)maxLevelEnduranceLevel));
+            WoundLogger.DebugLog($"Agent damage taken: {agentDamageTaken}\nLimb damage taken: {limbDamage}\n");
+            return limbDamage;
         }
-        return agentDamageTaken;
+        return 2;
     }
         
     public string GetInjuryDescriptions()
@@ -107,8 +108,8 @@ internal class LimbDamageManager
         foreach (BoneBodyPartType bodyPart in keys)
         {
             BodyPartStatus ld = this.DamagedLimbs[bodyPart];
-            string injuredText = ld.IsInjured ? "Yes" : "No";
-            infoBuilder.AppendLine($"{bodyPart.ToString()}: {ld.TotalDamage}\nInjured: {injuredText}\n");
+            string injuredText = ld.IsInjured ? ld.Severity.ToString() : "No";
+            infoBuilder.AppendLine($"{bodyPart.ToString()}: {ld.TotalDamage}\nSeverity: {injuredText}\n");
         }
         return infoBuilder.ToString();
     } 
