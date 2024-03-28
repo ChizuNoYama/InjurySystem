@@ -4,7 +4,7 @@ using TaleWorlds.MountAndBlade;
 
 namespace InjuryMod.Utils;
 
-public static class BodyPartToSkillConverter
+public static class BodyPartConverterUtility
 {
     public static List<SkillObject> GetSkillsFromBodyPart(BoneBodyPartType bodyPart)
     {

@@ -5,23 +5,23 @@ namespace InjuryMod.Utils;
 
 public static class InjurySeverityUtilities
 {
-    public static float GetPenalty(InjurySeverity severity)
+    public static float GetPenaltyMultipler(InjurySeverity severity)
     {
         switch (severity)
         {
             case InjurySeverity.Bruised:
-                return 0.125f;
+                return 0.75f;
             case InjurySeverity.Sprained:
-                return 0.25f;
+                return 0.50f;
             case InjurySeverity.Fractured:
                 return 0.375f;
             case InjurySeverity.Broken:
-                return 0.50f;
+                return 0.25f;
             case InjurySeverity.Mangled:
-                return 0.75f;
+                return 0.05f;
             case InjurySeverity.None:
             default:
-                return 0f;
+                return 1f;
                 
         }
     }

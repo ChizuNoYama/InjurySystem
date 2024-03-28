@@ -2,6 +2,8 @@
 using TaleWorlds.MountAndBlade;
 using System;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using TaleWorlds.Library;
 using InjuryMod.Utils;
 using TaleWorlds.Core;
@@ -21,19 +23,17 @@ namespace InjuryMod
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
-            Module.CurrentModule.AddInitialStateOption(new InitialStateOption(id: "Message",
-                                                                              name: new TextObject("Message", null),
-                                                                              orderIndex: 9990,
-                                                                              action: () => { InformationManager.DisplayMessage(new InformationMessage("Hello World!")); },
-                                                                              isDisabledAndReason: () => (false, null)));
             
             InitHarmony();
             LimbDamageManager.Initialize();
+            WoundLogger.DebugLog("InjuryMod Loaded");
         }
 
         public static void InitHarmony()
         {
+            Harmony.DEBUG = true;
             Harmony harmony = new Harmony(HarmonyId);
+            // harmony.PatchCategory(Assembly.GetAssembly(typeof(InjuryMod)), "AgentDrivenPropertyPatch");
             harmony.PatchAll();
         }
 
@@ -65,7 +65,6 @@ namespace InjuryMod
 
         private void OnMissionMainAgentChanged(object sender, EventArgs args)
         {
-            // I hate this nullable stuff, but I also hate handling NRE's
             Mission? mission = sender as Mission;
             if (mission?.MainAgent != null && mission.MainAgent.IsHero)
             {
@@ -74,7 +73,8 @@ namespace InjuryMod
                 {
                     WoundedAgentComponent component = new WoundedAgentComponent(mission.MainAgent);
                     mission.MainAgent.AddComponentIfNotExisting(component);
-                    
+                    // ObjectUtilities.PlayerAgentProperties = mission.MainAgent.AgentDrivenProperties;
+
                 }
             }
         }
