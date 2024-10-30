@@ -4,18 +4,17 @@ using TaleWorlds.MountAndBlade;
 using InjuryMod.Models;
 using InjuryMod.Utils;
 using SandBox.GameComponents;
+using TaleWorlds.CampaignSystem.Issues;
+using TaleWorlds.CampaignSystem.SceneInformationPopupTypes;
 
 namespace InjuryMod.Patches;
 
-// [HarmonyPatchCategory("AgentDrivenPropertyPatch")]
 [HarmonyPatch(typeof(SandboxAgentStatCalculateModel), "UpdateHumanStats")]
 public class InjuryPenaltyToAgentPropertiesPatch
 {
     [HarmonyPostfix]
     static void ApplyPenaltyToAgentDrivenProperties(Agent agent, AgentDrivenProperties agentDrivenProperties)
     {
-        BodyPartStatus status;
-
         foreach (KeyValuePair<BoneBodyPartType, BodyPartStatus> statusPair in LimbDamageManager.Instance!.DamagedLimbs)
         {
             if (statusPair.Value.IsInjured)
@@ -25,14 +24,25 @@ public class InjuryPenaltyToAgentPropertiesPatch
 
                 switch (statusPair.Key)
                 {
-                    case BoneBodyPartType.ArmLeft | BoneBodyPartType.ArmRight:
+                    case BoneBodyPartType.ArmLeft:
+                    case BoneBodyPartType.ArmRight:
                         agentDrivenProperties.SwingSpeedMultiplier *= penaltyMultiplier;
                         agentDrivenProperties.HandlingMultiplier *= penaltyMultiplier;
                         agentDrivenProperties.ReloadSpeed *= penaltyMultiplier;
+                        agentDrivenProperties.WeaponBestAccuracyWaitTime *= penaltyMultiplier;
+                        agentDrivenProperties.WeaponsEncumbrance *= penaltyMultiplier;
                         break;
                     case BoneBodyPartType.Legs:
                         agentDrivenProperties.MountManeuver *= penaltyMultiplier;
+                        agentDrivenProperties.MountSpeed += penaltyMultiplier;
+                        agentDrivenProperties.ArmorEncumbrance *= penaltyMultiplier;
+                        agentDrivenProperties.TopSpeedReachDuration *= penaltyMultiplier;
+                        agentDrivenProperties.MaxSpeedMultiplier *= penaltyMultiplier;
                         break;
+                    case BoneBodyPartType.Chest:
+                        agentDrivenProperties.ArmorEncumbrance *= penaltyMultiplier;
+                        break;
+                }
             }
         // if(status == null)
         // {
